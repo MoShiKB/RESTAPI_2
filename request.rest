@@ -16,3 +16,12 @@ GET http://localhost:3000/post/697603825f8b160c398f1db3
 
 ###get posts by sender Id
 GET http://localhost:3000/post?sender=315005
+###update post 
+PUT http://localhost:3000/post/697604605f8b160c398f1db5
+Content-Type: application/json
+
+{
+    "title": "updated post about new fashion",
+    "content": "This is an updated post about pants.",
+    "senderId": 7171
+}
