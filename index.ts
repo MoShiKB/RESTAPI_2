@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import postsRoutes from "./routes/posts.routes";
 import commentsRoutes from "./routes/comments.routes";
+import authRoutes from "./routes/auth.routes";
+import usersRoutes from "./routes/users.routes";
 
 dotenv.config();
 
@@ -10,6 +12,8 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use("/auth", authRoutes);
+app.use("/user", usersRoutes);
 app.use("/post", postsRoutes);
 app.use("/comment", commentsRoutes);
 

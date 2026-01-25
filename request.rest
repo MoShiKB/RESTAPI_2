@@ -1,6 +1,69 @@
 @postId = 6976033a5f8b160c398f1db1
 @commentId = 6976828b4b02780898b80808
 @sender = 123
+@userId = 69768a7db0a4ffa83d5ae5c7
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~ Auth ~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+###register a new user
+POST http://localhost:3001/auth/register
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "password123"
+}
+
+###login
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "password123"
+}
+
+###refresh token
+POST http://localhost:3001/auth/refresh-token
+Content-Type: application/json
+
+{
+    "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+###logout
+POST http://localhost:3001/auth/logout
+Content-Type: application/json
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+{
+    "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~ Users ~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+###get all users
+GET http://localhost:3001/user
+
+###get user by id
+GET http://localhost:3001/user/{{userId}}
+
+###update user
+PUT http://localhost:3001/user/{{userId}}
+Content-Type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe"
+}
+
+###delete user
+DELETE http://localhost:3001/user/{{userId}}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~ Posts ~~~~~~~~~~~~#
