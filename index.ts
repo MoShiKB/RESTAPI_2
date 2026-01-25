@@ -2,14 +2,16 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import postsRoutes from "./routes/posts.routes";
+import commentsRoutes from "./routes/comments.routes";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use("/post", postsRoutes);
+app.use("/comment", commentsRoutes);
 
 const startServer = async () => {
     try {
