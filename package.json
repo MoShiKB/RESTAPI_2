@@ -1,0 +1,25 @@
+{
+  "name": "appsdevelop",
+  "version": "1.0.0",
+  "description": "FSD backend",
+  "license": "ISC",
+  "author": "Yuli keren & Moshik baruch",
+  "type": "commonjs",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node -r dotenv/config index.ts",
+    "start:dev": "nodemon"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.1.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.0.0",
+    "dotenv": "^16.6.1",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.0"
+  }
+}
