@@ -1,1 +1,10 @@
-//tests
+###create new post
+POST http://localhost:3000/post
+Content-Type: application/json
+
+{
+    "title": "post about food",
+    "content": "This is a post about pasta.",
+    "senderId": 123
+}
+
