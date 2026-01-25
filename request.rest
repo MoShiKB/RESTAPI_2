@@ -13,3 +13,6 @@ GET http://localhost:3000/post
 
 ###get post by id
 GET http://localhost:3000/post/697603825f8b160c398f1db3
+
+###get posts by sender Id
+GET http://localhost:3000/post?sender=315005
