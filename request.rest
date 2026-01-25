@@ -1,54 +1,44 @@
-@postId = 6738b6d647545097428cbbe9
-@commentId = 6738b9c30e8d99f8abfb5db3
+@postId = 6976033a5f8b160c398f1db1
+@commentId = 6976828b4b02780898b80808
 @sender = 123
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~ Posts ~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-# Add a new post
+###create new post
 POST http://localhost:3001/post
 Content-Type: application/json
 
 {
-  "title": "My new Post",
-  "content": "This is the content of my first post!",
-  "senderId": "{{sender}}"
+    "title": "post about food",
+    "content": "This is a post about pasta.",
+    "senderId": 315005
 }
 
-###
-
-# Get all posts
+###get all posts
 GET http://localhost:3001/post
 
-###
+###get post by id
+GET http://localhost:3001/post/697603825f8b160c398f1db3
 
-# Get a post by ID
-GET http://localhost:3001/post/{{postId}}
-
-###
-
-# Get posts by sender
-GET http://localhost:3001/post?sender={{sender}}
-
-###
-
-# Update a post
-PUT http://localhost:3001/post/{{postId}}
+###get posts by sender Id
+GET http://localhost:3001/post?sender=315005
+###update post 
+PUT http://localhost:3001/post/6976033a5f8b160c398f1db1
 Content-Type: application/json
 
 {
-  "title": "My new Post - Updated",
-  "content": "Updated content of my post!"
+    "title": "updated post about new fashion",
+    "content": "This is an updated post about pants.",
+    "senderId": 7171
 }
-
-###
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~ Comments ~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-# Create a new comment
+###Create a new comment
 POST http://localhost:3001/comment
 Content-Type: application/json
 
@@ -58,24 +48,16 @@ Content-Type: application/json
   "author": "John Doe"
 }
 
-###
-
-# Get all comments
+### Get all comments
 GET http://localhost:3001/comment
 
-###
-
-# Get a comment by ID
+###Get a comment by ID
 GET http://localhost:3001/comment/{{commentId}}
 
-###
-
-# Get all comments for a specific post
+###Get all comments for a specific post
 GET http://localhost:3001/comment/post/{{postId}}
 
-###
-
-# Update a comment
+### Update a comment
 PUT http://localhost:3001/comment/{{commentId}}
 Content-Type: application/json
 
@@ -83,8 +65,5 @@ Content-Type: application/json
   "content": "This is my updated comment!",
   "author": "John Doe"
 }
-
-###
-
-# Delete a comment
+### Delete a comment
 DELETE http://localhost:3001/comment/{{commentId}}
