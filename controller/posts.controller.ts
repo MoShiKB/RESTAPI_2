@@ -32,8 +32,25 @@ const getAllPosts = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ error: "Failed to get posts" });
     }
 };
+const getPostById = async (req: Request, res: Response): Promise<void> => {
+    const postId = req.params.id;
+    try {
+        const post = await postModel.findById(postId);
+        if (!post) {
+            res.status(404).json({ error: "Post not found" });
+            return;
+        }
+        res.json(post);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to get post by ID" });
+    }
+};
+
 
 export default {
     createPost,
     getAllPosts,
+    getPostById,
+    
 };
