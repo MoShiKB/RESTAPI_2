@@ -8,3 +8,6 @@ Content-Type: application/json
     "senderId": 123
 }
 
+###get all posts
+GET http://localhost:3000/post
+

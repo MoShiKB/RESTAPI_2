@@ -14,6 +14,26 @@ const createPost = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+const getAllPosts = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const sender = req.query.sender;
+
+        if (sender) {
+            const postsBySender = await postModel.find({ senderId: Number(sender) });
+            res.json(postsBySender);
+            return;
+        } else {
+            const posts = await postModel.find();
+            res.json(posts);
+            return;
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to get posts" });
+    }
+};
+
 export default {
     createPost,
+    getAllPosts,
 };
