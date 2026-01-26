@@ -29,14 +29,10 @@ const startServer = async () => {
       console.error("DB connect error:", err);
       process.exit(1);
     }
-  };
-  
-  startServer();
+};
 
+if (process.env.NODE_ENV !== 'test') {
+    startServer();
+}
 
-
-
-
-
-
-
+export default app;
