@@ -113,22 +113,22 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 };
 
 const refreshToken = async (req: Request, res: Response): Promise<void> => {
-    const { refreshToken } = req.body;
+    const token = req.body?.refreshToken;
 
-    if (!refreshToken) {
+    if (!token) {
         res.status(400).json({ error: "Refresh token required" });
         return;
     }
 
     try {
         const decodedToken = jwt.verify(
-            refreshToken,
+            token,
             process.env.JWT_REFRESH_SECRET!
         ) as ITokenPayload;
 
         const user = await userModel.findById(decodedToken.userId).select("+refreshToken");
 
-        if (!user || user.refreshToken !== refreshToken) {
+        if (!user || user.refreshToken !== token) {
             res.status(403).json({ error: "Invalid refresh token" });
             return;
         }
