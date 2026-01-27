@@ -4,6 +4,7 @@ import User, { IUser } from '../../model/users.model';
 import { userId, token } from '../setup';
 import { Types } from "mongoose";
 
+
 describe('User API', () => {
     it('should get all users', async () => {
         await User.create({

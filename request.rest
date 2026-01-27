@@ -1,8 +1,9 @@
-@postId = 6976033a5f8b160c398f1db1
-@commentId = 6976828b4b02780898b80808
+@postId = 6978bebed077b2780564e7d5
+@commentId = 6978c91b714213b243e3c84a
 @sender = 123
-@userId = 69768a7db0a4ffa83d5ae5c7
-
+@userId = 315005
+@accessToken =YOURE_ACCESS_TOKEN_HERE
+@refreshToken =YOURE_REFRESH_TOKEN_HERE
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~~ Auth ~~~~~~~~~~~~#
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -31,16 +32,16 @@ POST http://localhost:3001/auth/refresh-token
 Content-Type: application/json
 
 {
-    "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+    "refreshToken": "{{refreshToken}}"
 }
 
 ###logout
 POST http://localhost:3001/auth/logout
 Content-Type: application/json
-Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+Authorization: Bearer {{accessToken}}
 
 {
-    "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+    "refreshToken": "{{refreshToken}}"
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -49,12 +50,14 @@ Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
 
 ###get all users
 GET http://localhost:3001/user
+Authorization: Bearer {{accessToken}}
 
 ###get user by id
 GET http://localhost:3001/user/{{userId}}
-
+Authorization: Bearer {{accessToken}}
 ###update user
 PUT http://localhost:3001/user/{{userId}}
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
@@ -64,6 +67,7 @@ Content-Type: application/json
 
 ###delete user
 DELETE http://localhost:3001/user/{{userId}}
+Authorization: Bearer {{accessToken}}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #~~~~~~~~~~~ Posts ~~~~~~~~~~~~#
@@ -72,24 +76,30 @@ DELETE http://localhost:3001/user/{{userId}}
 ###create new post
 POST http://localhost:3001/post
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
+    "postId": "{{postId}}",
     "title": "post about food",
     "content": "This is a post about pasta.",
-    "senderId": 315005
+    "senderId": "{{sender}}"
 }
 
 ###get all posts
 GET http://localhost:3001/post
+Authorization: Bearer {{accessToken}}
 
 ###get post by id
-GET http://localhost:3001/post/697603825f8b160c398f1db3
+GET http://localhost:3001/post/{{postId}}
+Authorization: Bearer {{accessToken}}
 
 ###get posts by sender Id
-GET http://localhost:3001/post?sender=315005
+GET http://localhost:3001/post?{{sender}}
+Authorization: Bearer {{accessToken}}
 ###update post 
-PUT http://localhost:3001/post/6976033a5f8b160c398f1db1
+PUT http://localhost:3001/post/{{postId}}
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "title": "updated post about new fashion",
@@ -104,6 +114,7 @@ Content-Type: application/json
 ###Create a new comment
 POST http://localhost:3001/comment
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "postId": "{{postId}}",
@@ -113,16 +124,20 @@ Content-Type: application/json
 
 ### Get all comments
 GET http://localhost:3001/comment
+Authorization: Bearer {{accessToken}}
 
 ###Get a comment by ID
 GET http://localhost:3001/comment/{{commentId}}
+Authorization: Bearer {{accessToken}}
 
 ###Get all comments for a specific post
 GET http://localhost:3001/comment/post/{{postId}}
+Authorization: Bearer {{accessToken}}
 
 ### Update a comment
 PUT http://localhost:3001/comment/{{commentId}}
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "content": "This is my updated comment!",
@@ -130,3 +145,4 @@ Content-Type: application/json
 }
 ### Delete a comment
 DELETE http://localhost:3001/comment/{{commentId}}
+Authorization: Bearer {{accessToken}}
