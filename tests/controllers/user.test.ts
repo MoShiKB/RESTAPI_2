@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../../index';
 import User, { IUser } from '../../model/users.model';
-import { userId } from '../setup';
+import { userId, token } from '../setup';
 import { Types } from "mongoose";
 
 describe('User API', () => {
@@ -13,7 +13,8 @@ describe('User API', () => {
         });
 
         const res = await request(app)
-            .get('/user');
+            .get('/user')
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
@@ -21,12 +22,14 @@ describe('User API', () => {
     });
 
     it('should return 500 if an error occurs during getAllUsers', async () => {
-        const mockError = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const mockError = jest.spyOn(console, 'error').mockImplementation(() => { });
         jest.spyOn(User, 'find').mockImplementationOnce(() => {
             throw new Error('Database error');
         });
 
-        const res = await request(app).get('/user');
+        const res = await request(app)
+            .get('/user')
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('Failed to get users');
@@ -43,7 +46,8 @@ describe('User API', () => {
         });
 
         const res = await request(app)
-            .get(`/user/${user._id}`);
+            .get(`/user/${user._id}`)
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(200);
         expect(res.body._id).toBe(user._id.toString());
@@ -54,19 +58,28 @@ describe('User API', () => {
         const fakeId = new Types.ObjectId();
 
         const res = await request(app)
-            .get(`/user/${fakeId}`);
+            .get(`/user/${fakeId}`)
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('User not found');
     });
 
     it('should return 500 if an error occurs during getUserById', async () => {
-        const mockError = jest.spyOn(console, 'error').mockImplementation(() => {});
-        jest.spyOn(User, 'findById').mockImplementationOnce(() => {
+        const mockError = jest.spyOn(console, 'error').mockImplementation(() => { });
+        const originalFindById = User.findById.bind(User);
+        let callCount = 0;
+        jest.spyOn(User, 'findById').mockImplementation((...args) => {
+            callCount++;
+            if (callCount === 1) {
+                return originalFindById(...args);
+            }
             throw new Error('Database error');
         });
 
-        const res = await request(app).get(`/user/${userId}`);
+        const res = await request(app)
+            .get(`/user/${userId}`)
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('Failed to get user');
@@ -84,6 +97,7 @@ describe('User API', () => {
 
         const res = await request(app)
             .put(`/user/${user._id}`)
+            .set('Authorization', token)
             .send({});
 
         expect(res.statusCode).toBe(200);
@@ -99,6 +113,7 @@ describe('User API', () => {
 
         const res = await request(app)
             .put(`/user/${user._id}`)
+            .set('Authorization', token)
             .send({
                 username: 'newusername',
             });
@@ -116,6 +131,7 @@ describe('User API', () => {
 
         const res = await request(app)
             .put(`/user/${user._id}`)
+            .set('Authorization', token)
             .send({
                 email: 'newemail@example.com',
             });
@@ -129,6 +145,7 @@ describe('User API', () => {
 
         const res = await request(app)
             .put(`/user/${fakeId}`)
+            .set('Authorization', token)
             .send({});
 
         expect(res.statusCode).toBe(404);
@@ -136,13 +153,14 @@ describe('User API', () => {
     });
 
     it('should return 500 if an error occurs during updateUser', async () => {
-        const mockError = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const mockError = jest.spyOn(console, 'error').mockImplementation(() => { });
         jest.spyOn(User, 'findByIdAndUpdate').mockImplementationOnce(() => {
             throw new Error('Database error');
         });
 
         const res = await request(app)
             .put(`/user/${userId}`)
+            .set('Authorization', token)
             .send({});
 
         expect(res.statusCode).toBe(500);
@@ -160,7 +178,8 @@ describe('User API', () => {
         });
 
         const res = await request(app)
-            .delete(`/user/${user._id}`);
+            .delete(`/user/${user._id}`)
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(200);
         expect(res.body.message).toBe('User deleted successfully');
@@ -173,19 +192,22 @@ describe('User API', () => {
         const fakeId = new Types.ObjectId();
 
         const res = await request(app)
-            .delete(`/user/${fakeId}`);
+            .delete(`/user/${fakeId}`)
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('User not found');
     });
 
     it('should return 500 if an error occurs during deleteUser', async () => {
-        const mockError = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const mockError = jest.spyOn(console, 'error').mockImplementation(() => { });
         jest.spyOn(User, 'findByIdAndDelete').mockImplementationOnce(() => {
             throw new Error('Database error');
         });
 
-        const res = await request(app).delete(`/user/${userId}`);
+        const res = await request(app)
+            .delete(`/user/${userId}`)
+            .set('Authorization', token);
 
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('Failed to delete user');

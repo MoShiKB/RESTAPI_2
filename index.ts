@@ -5,6 +5,7 @@ import postsRoutes from "./routes/posts.routes";
 import commentsRoutes from "./routes/comments.routes";
 import authRoutes from "./routes/auth.routes";
 import usersRoutes from "./routes/users.routes";
+import isAuthorized from "./middleware/authorization";
 
 dotenv.config();
 
@@ -13,26 +14,26 @@ const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use("/auth", authRoutes);
-app.use("/user", usersRoutes);
-app.use("/post", postsRoutes);
-app.use("/comment", commentsRoutes);
+app.use("/user", isAuthorized, usersRoutes);
+app.use("/post", isAuthorized, postsRoutes);
+app.use("/comment", isAuthorized, commentsRoutes);
 
 const startServer = async () => {
-    try {
-      await mongoose.connect(process.env.DATABASE_URL as string);
-      console.log("Connected to Database");
-      
-      app.listen(port, () => {
-        console.log(`listening at http://localhost:${port}`);
-      });
-    } catch (err) {
-      console.error("DB connect error:", err);
-      process.exit(1);
-    }
+  try {
+    await mongoose.connect(process.env.DATABASE_URL as string);
+    console.log("Connected to Database");
+
+    app.listen(port, () => {
+      console.log(`listening at http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.error("DB connect error:", err);
+    process.exit(1);
+  }
 };
 
 if (process.env.NODE_ENV !== 'test') {
-    startServer();
+  startServer();
 }
 
 export default app;
