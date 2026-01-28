@@ -16,11 +16,7 @@ describe('Post API', () => {
     expect(res.body.title).toBe('My new comment Post');
   });
   it('should return 400 for invalid post data', async () => {
-    const res = await request(app)
-        .post('/post')
-        .set('Authorization', token)
-        .send({ title: '' });
-
+    const res = await request(app).post('/post').set('Authorization', token).send({ title: '' });
     expect(res.statusCode).toBe(400);
     expect(res.body.error).toBeDefined();
   });
@@ -32,11 +28,7 @@ describe('Post API', () => {
   senderId: new Types.ObjectId(userId),
 });
     await post.save();
-
-    const res = await request(app)
-        .get('/post')
-        .set('Authorization', token);
-
+    const res = await request(app).get('/post').set('Authorization', token);
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBe(1);
@@ -50,29 +42,21 @@ describe('Post API', () => {
       senderId: new Types.ObjectId(userId),
     });
     await post.save();
-
-    const res = await request(app)
-        .get(`/post?sender=${userId.toString()}`)
-        .set('Authorization', token);
-
+    const res = await request(app).get(`/post?sender=${userId.toString()}`).set('Authorization', token);
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBe(1);
    expect(res.body[0].senderId.toString()).toBe(userId.toString());
   });
 
-  it('should get a post by ID', async () => {
+  it('Get post by ID', async () => {
     const post = new Post<Partial<IPost>>({
       title: 'Test Post',
       content: 'Test Content',
       senderId: new Types.ObjectId(userId),
     });
     await post.save();
-
-    const res = await request(app)
-        .get(`/post/${post._id}`)
-        .set('Authorization', token);
-
+    const res = await request(app).get(`/post/${post._id}`).set('Authorization', token);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('_id', post.id);
     expect(res.body.title).toBe(post.title);
@@ -80,11 +64,7 @@ describe('Post API', () => {
 
   it('should return 404 for a non-existent post', async () => {
     const fakeId = new Types.ObjectId();
-
-    const res = await request(app)
-        .get(`/post/${fakeId}`)
-        .set('Authorization', token);
-
+    const res = await request(app).get(`/post/${fakeId}`).set('Authorization', token);
     expect(res.statusCode).toBe(404);
     expect(res.body.error).toBe('Post not found');
   });

@@ -41,23 +41,37 @@ const getCommentById = async (req: Request, res: Response): Promise<void> => {
 };
 
 const createComment = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const postId = req.params.postId ?? req.body.postId;
-    const { content, author } = req.body;
+    try {
+        const { postId } = req.params;
+        const { content, author } = req.body;
+        const authorId = author || (req as any).user?.userId;
+        
+        if (!authorId) {
+            res.status(400).json({ error: "Author is required" });
+            return;
+        }
 
-    const post = await postModel.findById(postId);
-    if (!post) {
-      res.status(404).json({ error: "Post not found" });
-      return;
+        const post = await postModel.findById(postId);
+        if (!post) {
+            res.status(404).json({ error: "Post not found" });
+            return;
+        }
+
+        const newComment = await commentModel.create({ 
+            postId, 
+            content, 
+            author: authorId
+        });
+        
+        await postModel.findByIdAndUpdate(postId, { 
+            $push: { comments: newComment._id } 
+        });
+        
+        res.status(201).json(newComment);
+    } catch (err: any) {
+        console.error(err);
+        res.status(500).json({ error: err.message || "Failed to create comment" });
     }
-
-    const newComment = await commentModel.create({ postId, content, author });
-    await postModel.findByIdAndUpdate(postId, { $push: { comments: newComment._id } });
-    res.status(201).json(newComment);
-  } catch (err) {
-      console.error(err);
-        res.status(500).json({ error: "Failed to create comment" });
-  }
 };
 
 const updateComment = async (req: Request, res: Response): Promise<void> => {
@@ -139,6 +153,67 @@ const deleteAllCommentsForPost = async (req: Request, res: Response): Promise<vo
     sendDbError(res, err);
   }
 };
+const getCommentByIdInPost = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { postId, id } = req.params;
+        
+        const post = await postModel.findById(postId);
+        if (!post) {
+            res.status(404).json({ error: "Post not found" });
+            return;
+        }
+        
+        const comment = await commentModel.findById(id);
+        
+        if (!comment) {
+            res.status(404).json({ error: "Comment not found" });
+            return;
+        }
+        
+        if (comment.postId.toString() !== postId) {
+            res.status(404).json({ error: "Comment not found" });
+            return;
+        }
+        
+        res.json(comment);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to get comment" });
+    }
+};
+
+const updateCommentInPost = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { postId, id } = req.params;
+        const { content } = req.body;
+        const post = await postModel.findById(postId);
+        if (!post) {
+            res.status(404).json({ error: "Post not found" });
+            return;
+        }
+
+        const updatedComment = await commentModel.findByIdAndUpdate(
+            id,
+            { content },
+            { new: true }
+        );
+
+        if (!updatedComment) {
+            res.status(404).json({ error: "Comment not found" });
+            return;
+        }
+
+        if (updatedComment.postId.toString() !== postId) {
+            res.status(404).json({ error: "Comment not found" });
+            return;
+        }
+
+        res.json(updatedComment);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update comment" });
+    }
+};
 export default {
   getCommentsByPostId,
   getCommentById,
@@ -147,4 +222,6 @@ export default {
   deleteComment,
   deleteCommentInPost,
   deleteAllCommentsForPost,
+  getCommentByIdInPost,
+  updateCommentInPost,
 };

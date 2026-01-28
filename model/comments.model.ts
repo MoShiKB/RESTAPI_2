@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 export interface IComment extends Document {
     postId: mongoose.Types.ObjectId;
     content: string;
-     author: Types.ObjectId;
+    author: Types.ObjectId;
 }
 
 const commentsSchema = new Schema<IComment>({
