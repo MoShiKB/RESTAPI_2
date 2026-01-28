@@ -24,6 +24,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.0.0",
     "@types/supertest": "^6.0.2",
+    "cross-env": "^10.1.0",
     "dotenv": "^16.6.1",
     "nodemon": "^3.1.11",
     "supertest": "^7.0.0",

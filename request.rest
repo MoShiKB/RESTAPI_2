@@ -1,4 +1,4 @@
-@postId = 6978bebed077b2780564e7d5
+@postId = 6978c4ec977323160c52ecd8
 @commentId = 6978c91b714213b243e3c84a
 @sender = 123
 @userId = 315005
@@ -104,7 +104,7 @@ Authorization: Bearer {{accessToken}}
 {
     "title": "updated post about new fashion",
     "content": "This is an updated post about pants.",
-    "senderId": 7171
+    "sender": "{{sender}}"
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

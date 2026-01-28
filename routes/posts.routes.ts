@@ -8,5 +8,7 @@ router.post("/",isAuthorized, postsController.createPost);
 router.get("/", postsController.getAllPosts);
 router.get("/:id", postsController.getPostById);
 router.put("/:id", postsController.updatePost);
+router.delete("/:id", postsController.deletePost);
+
 
 export default router;
