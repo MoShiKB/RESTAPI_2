@@ -5,18 +5,17 @@ import isAuthorized from "../middleware/authorization";
 const router = express.Router();
 
 router.get("/post/:postId", isAuthorized, commentsController.getCommentsByPostId);
-router.get("/:id", isAuthorized, commentsController.getCommentById);
-router.post("/", isAuthorized, commentsController.createComment);
-router.put("/:id", isAuthorized, commentsController.updateComment);
-router.delete("/:id", isAuthorized, commentsController.deleteComment);
-
-export const postCommentsRouter = express.Router({ mergeParams: true });
-
-postCommentsRouter.get("/", isAuthorized, commentsController.getCommentsByPostId);
-postCommentsRouter.post("/", isAuthorized, commentsController.createComment);
-postCommentsRouter.get("/:id", isAuthorized, commentsController.getCommentByIdInPost);
-postCommentsRouter.put("/:id", isAuthorized, commentsController.updateCommentInPost);
-postCommentsRouter.delete("/:id", isAuthorized, commentsController.deleteCommentInPost);
-postCommentsRouter.delete("/", isAuthorized, commentsController.deleteAllCommentsForPost);
-
+router.post("/post/:postId", isAuthorized, commentsController.createComment);
+router.get("/", isAuthorized, commentsController.getAllComments);
+router.get("/post/:postId/:id", isAuthorized, commentsController.getCommentByIdInPost);
+router.put("/post/:postId/:id", isAuthorized, commentsController.updateCommentInPost);
+router.delete("/post/:postId/:id", isAuthorized, commentsController.deleteCommentInPost);
 export default router;
+
+
+
+
+
+
+
+
