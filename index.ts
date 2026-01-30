@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import postsRoutes from "./routes/posts.routes";
-import commentsRoutes from "./routes/comments.routes";
+import commentsRouter, { postCommentsRouter } from "./routes/comments.routes";
 import authRoutes from "./routes/auth.routes";
 import usersRoutes from "./routes/users.routes";
 import isAuthorized from "./middleware/authorization";
@@ -16,7 +16,8 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/user", isAuthorized, usersRoutes);
 app.use("/post", isAuthorized, postsRoutes);
-app.use("/comment", isAuthorized, commentsRoutes);
+app.use("/comment", isAuthorized, commentsRouter);
+app.use("/post/:postId/comment", isAuthorized, postCommentsRouter);
 
 const startServer = async () => {
   try {

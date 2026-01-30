@@ -1,11 +1,14 @@
 import express from "express";
 import postsController from "../controller/posts.controller";
+import isAuthorized from "../middleware/authorization";
 
 const router = express.Router();
 
-router.post("/", postsController.createPost);
+router.post("/",isAuthorized, postsController.createPost);
 router.get("/", postsController.getAllPosts);
 router.get("/:id", postsController.getPostById);
 router.put("/:id", postsController.updatePost);
+router.delete("/:id", postsController.deletePost);
+
 
 export default router;
