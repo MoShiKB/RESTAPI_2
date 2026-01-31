@@ -22,7 +22,7 @@ app.use("/user", isAuthorized, usersRoutes);
 app.use("/post", isAuthorized, postsRoutes);
 app.use("/comment", isAuthorized, commentsRouter);
 
-export const startServer = async () => {
+ const startServer = async () => {
   try {
     await mongoose.connect(process.env.DATABASE_URL as string);
     console.log("Connected to Database");

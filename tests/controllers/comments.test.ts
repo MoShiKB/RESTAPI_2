@@ -71,7 +71,7 @@ describe('Comment Routes', () => {
 
     it('should return 500 if an error occurs during getting all comments', async () => {
       jest.spyOn(Post, 'findById').mockImplementationOnce(() => {
-        throw new Error('Failed to get comments');
+        throw new Error('Database error');
       });
 
       const res = await request(app)
