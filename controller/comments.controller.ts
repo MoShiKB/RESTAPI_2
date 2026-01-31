@@ -7,15 +7,7 @@ const sendDbError = (res: Response, err: unknown) => {
   return res.status(500).json({ error: msg });
 };
 
-export const getAllComments = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const comments = await commentModel.find();
-    res.json(comments);
-  } catch (err) {
-    const error = err as Error;
-    res.status(500).json({ message: error.message });
-  }
-};
+
 
 const getCommentsByPostId = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -87,7 +79,7 @@ const createComment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { postId } = req.params.postId ? req.params : req.body;
     const { content, author } = req.body;
-    const authorId = author || (req as any).user?.userId;
+    const authorId = author || (req as any).user?._id;
 
     if (!authorId) {
       res.status(400).json({ error: "Author is required" });
@@ -117,7 +109,6 @@ const createComment = async (req: Request, res: Response): Promise<void> => {
 };
 
 export default {
-  getAllComments,
   getCommentsByPostId,
   createComment,
   getCommentById,

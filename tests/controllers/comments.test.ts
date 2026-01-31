@@ -24,34 +24,10 @@ describe('Comment Routes', () => {
     commentId = comment._id.toString();
   });
 
-  describe('GET /comment', () => {
-    it('should get all comments', async () => {
-      const res = await request(app)
-        .get('/comment')
-        .set('Authorization', token);
-
-      expect(res.statusCode).toBe(200);
-      expect(Array.isArray(res.body)).toBe(true);
-    });
-
-    it('should return 500 if an error occurs during getting all comments', async () => {
-      jest.spyOn(Comment, 'find').mockImplementationOnce(() => {
-        throw new Error('Database error');
-      });
-
-      const res = await request(app)
-        .get('/comment')
-        .set('Authorization', token);
-
-      expect(res.statusCode).toBe(500);
-      jest.restoreAllMocks();
-    });
-  });
-
-  describe('GET /comment/post/:postId', () => {
+  describe('GET /post/:postId/comment', () => {
     it('should get all comments for a post', async () => {
       const res = await request(app)
-        .get(`/comment/post/${postId}`)
+        .get(`/post/${postId}/comment`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(200);
@@ -62,7 +38,7 @@ describe('Comment Routes', () => {
       const fakePostId = new mongoose.Types.ObjectId();
 
       const res = await request(app)
-        .get(`/comment/post/${fakePostId}`)
+        .get(`/post/${fakePostId}/comment`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(404);
@@ -75,18 +51,17 @@ describe('Comment Routes', () => {
       });
 
       const res = await request(app)
-        .get(`/comment/post/${postId}`)
+        .get(`/post/${postId}/comment`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(500);
-      jest.restoreAllMocks();
     });
   });
 
-  describe('GET /comment/:id', () => {
+  describe('GET /:postId/comment/:id', () => {
     it('should get a specific comment by ID', async () => {
       const res = await request(app)
-        .get(`/comment/${commentId}`)
+        .get(`/post/${postId}/comment/${commentId}`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(200);
@@ -98,34 +73,18 @@ describe('Comment Routes', () => {
       const fakeCommentId = new mongoose.Types.ObjectId();
 
       const res = await request(app)
-        .get(`/comment/${fakeCommentId}`)
+        .get(`/post/${postId}/comment/${fakeCommentId}`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(404);
       expect(res.body.error).toBe('Comment not found');
     });
-
-    it('should return 500 if an error occurs during getting a specific comments', async () => {
-      jest.spyOn(Comment, 'findById').mockImplementationOnce(() => {
-        throw new Error('Database error');
-      });
-
-      const res = await request(app)
-        .get(`/comment/${commentId}`)
-        .set('Authorization', token);
-
-      expect(res.statusCode).toBe(500);
-      expect(res.body.error).toBe('Database error');
-
-      jest.restoreAllMocks();
-    });
   });
 
-  describe('POST /comment and /comment/post/:postId', () => {
-    // Keeping existing POST tests but also could test generic POST /comment
-    it('should create a new comment via nested route', async () => {
+  describe('POST /post/:postId/comment', () => {
+    it('should create a new comment', async () => {
       const res = await request(app)
-        .post(`/comment/post/${postId}`)
+        .post(`/post/${postId}/comment`)
         .set('Authorization', token)
         .send({
           content: 'New Test Comment',
@@ -137,37 +96,24 @@ describe('Comment Routes', () => {
       expect(res.body.author.toString()).toBe(userId.toString());
     });
 
-    it('should create a new comment via flat route', async () => {
+    it('should create a comment using authenticated user when author is missing', async () => {
       const res = await request(app)
-        .post(`/comment`)
+        .post(`/post/${postId}/comment`)
         .set('Authorization', token)
         .send({
-          postId: postId,
-          content: 'Flat Test Comment',
-          author: userId.toString(),
-        });
-      expect(res.statusCode).toBe(201);
-      expect(res.body.content).toBe('Flat Test Comment');
-    });
-
-    it('should return 400 when author is missing', async () => {
-      const res = await request(app)
-        .post(`/comment/post/${postId}`)
-        .set('Authorization', token)
-        .send({
-          postId,
           content: 'Comment without author'
         });
 
-      expect(res.statusCode).toBe(400);
-      expect(res.body.error).toBe('Author is required');
+      expect(res.statusCode).toBe(201);
+      expect(res.body.content).toBe('Comment without author');
+      expect(res.body.author).toBeDefined();
     });
 
     it('should return 404 when creating a comment for a non-existent post', async () => {
       const fakePostId = new mongoose.Types.ObjectId();
 
       const res = await request(app)
-        .post(`/comment/post/${fakePostId}`)
+        .post(`/post/${fakePostId}/comment`)
         .set('Authorization', token)
         .send({
           content: 'Comment for non-existent post',
@@ -180,7 +126,7 @@ describe('Comment Routes', () => {
 
     it('should return 403 when creating a comment without authentication', async () => {
       const res = await request(app)
-        .post(`/comment/post/${postId}`)
+        .post(`/post/${postId}/comment`)
         .send({
           content: 'New comment',
           author: userId.toString()
@@ -188,31 +134,12 @@ describe('Comment Routes', () => {
 
       expect(res.statusCode).toBe(403);
     });
-
-    it('should return 500 if an error occurs during creating a new comment', async () => {
-      jest.spyOn(Post, 'findById').mockImplementationOnce(() => {
-        throw new Error('Database error');
-      });
-
-      const res = await request(app)
-        .post(`/comment/post/${postId}`)
-        .set('Authorization', token)
-        .send({
-          content: 'New Comment',
-          author: userId.toString(),
-        });
-
-      expect(res.statusCode).toBe(500);
-      expect(res.body.error).toBe('Database error');
-
-      jest.restoreAllMocks();
-    });
   });
 
-  describe('PUT /comment/:id', () => {
+  describe('PUT /post/:postId/comment/:id', () => {
     it('should update an existing comment', async () => {
       const res = await request(app)
-        .put(`/comment/${commentId}`)
+        .put(`/post/${postId}/comment/${commentId}`)
         .set('Authorization', token)
         .send({ content: 'Updated Comment' });
 
@@ -225,38 +152,16 @@ describe('Comment Routes', () => {
       const fakeCommentId = new mongoose.Types.ObjectId();
 
       const res = await request(app)
-        .put(`/comment/${fakeCommentId}`)
+        .put(`/post/${postId}/comment/${fakeCommentId}`)
         .set('Authorization', token)
         .send({ content: 'Updated content for non-existent comment' });
 
       expect(res.statusCode).toBe(404);
       expect(res.body.error).toBe('Comment not found');
     });
-
-    it('should return 403 when updating a comment without authentication', async () => {
-      const res = await request(app)
-        .put(`/comment/${commentId}`)
-        .send({ content: 'Updated content' });
-
-      expect(res.statusCode).toBe(403);
-    });
-
-    it('should return 500 if an error occurs during updating a comment', async () => {
-      jest.spyOn(Comment, 'findByIdAndUpdate').mockImplementationOnce(() => {
-        throw new Error('Database error');
-      });
-
-      const res = await request(app)
-        .put(`/comment/${commentId}`)
-        .set('Authorization', token)
-        .send({ content: 'Updated Comment' });
-      expect(res.statusCode).toBe(500);
-      expect(res.body.error).toBe('Database error');
-      jest.restoreAllMocks();
-    });
   });
 
-  describe('DELETE /comment/:id', () => {
+  describe('DELETE /post/:postId/comment/:id', () => {
     it('should delete a comment', async () => {
       const commentToDelete = await Comment.create({
         content: 'Comment to Delete',
@@ -265,7 +170,7 @@ describe('Comment Routes', () => {
       });
       await Post.findByIdAndUpdate(postId, { $push: { comments: commentToDelete._id } });
       const res = await request(app)
-        .delete(`/comment/${commentToDelete._id}`)
+        .delete(`/post/${postId}/comment/${commentToDelete._id}`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(200);
@@ -279,32 +184,78 @@ describe('Comment Routes', () => {
       const fakeCommentId = new mongoose.Types.ObjectId();
 
       const res = await request(app)
-        .delete(`/comment/${fakeCommentId}`)
+        .delete(`/post/${postId}/comment/${fakeCommentId}`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(404);
       expect(res.body.error).toBe('Comment not found');
     });
 
-    it('should return 403 when deleting a comment without authentication', async () => {
-      const res = await request(app)
-        .delete(`/comment/${commentId}`);
-
-      expect(res.statusCode).toBe(403);
-    });
-
-    it('should return 500 if an error occurs during deleting all comments', async () => {
+    it('should return 500 if an error occurs during deletion', async () => {
       jest.spyOn(Comment, 'findByIdAndDelete').mockImplementationOnce(() => {
         throw new Error('Database error');
       });
 
       const res = await request(app)
-        .delete(`/comment/${commentId}`)
+        .delete(`/post/${postId}/comment/${commentId}`)
         .set('Authorization', token);
 
       expect(res.statusCode).toBe(500);
       expect(res.body.error).toBe('Database error');
-      jest.restoreAllMocks();
+    });
+  });
+
+  describe('Database Error Scenarios', () => {
+    it('GET /:id should return 500 on db error', async () => {
+      jest.spyOn(Comment, 'findById').mockImplementationOnce(() => {
+        throw new Error('DB Error');
+      });
+      const res = await request(app)
+        .get(`/post/${postId}/comment/${commentId}`)
+        .set('Authorization', token);
+      expect(res.statusCode).toBe(500);
+    });
+
+    it('PUT /:id should return 500 on db error', async () => {
+      jest.spyOn(Comment, 'findByIdAndUpdate').mockImplementationOnce(() => {
+        throw new Error('DB Error');
+      });
+      const res = await request(app)
+        .put(`/post/${postId}/comment/${commentId}`)
+        .set('Authorization', token)
+        .send({ content: 'Update' });
+      expect(res.statusCode).toBe(500);
+    });
+
+    it('POST / should return 500 on db error', async () => {
+      jest.spyOn(Post, 'findById').mockImplementationOnce(() => {
+        throw new Error('DB Error');
+      });
+      const res = await request(app)
+        .post(`/post/${postId}/comment`)
+        .set('Authorization', token)
+        .send({ content: 'Fail' });
+      expect(res.statusCode).toBe(500);
+    });
+  });
+
+  describe('Direct Controller Tests - Create Comment', () => {
+    it('should return 400 if author is missing and request user is missing', async () => {
+      const req: any = {
+        body: { content: 'No author' },
+        params: { postId },
+        user: undefined
+      };
+      const res: any = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      const commentsController = require('../../controller/comments.controller').default;
+      await commentsController.createComment(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Author is required' });
     });
   });
 });

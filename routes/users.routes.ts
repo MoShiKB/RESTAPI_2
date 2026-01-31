@@ -64,7 +64,7 @@ router.get("/:id", usersController.getUserById);
  *       '200':
  *         description: Updated
  */
-router.put("/:id", isAuthorized, usersController.updateUser);
+router.put("/:id", usersController.updateUser);
 
 /**
  * @swagger
@@ -85,6 +85,6 @@ router.put("/:id", isAuthorized, usersController.updateUser);
  *       '200':
  *         description: Deleted
  */
-router.delete("/:id", isAuthorized, usersController.deleteUser);
+router.delete("/:id", usersController.deleteUser);
 
 export default router;

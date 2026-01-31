@@ -2,10 +2,11 @@ import express from "express";
 import commentsController from "../controller/comments.controller";
 import isAuthorized from "../middleware/authorization";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
+
 /**
  * @swagger
- * /comment/post/{postId}:
+ * /post/{postId}/comment:
  *   get:
  *     tags:
  *       - Comments
@@ -28,11 +29,11 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Comment'
  */
-router.get("/post/:postId", isAuthorized, commentsController.getCommentsByPostId);
+router.get("/", commentsController.getCommentsByPostId);
 
 /**
  * @swagger
- * /comment/post/{postId}:
+ * /post/{postId}/comment:
  *   post:
  *     tags:
  *       - Comments
@@ -54,6 +55,8 @@ router.get("/post/:postId", isAuthorized, commentsController.getCommentsByPostId
  *             properties:
  *               content:
  *                 type: string
+ *               author:
+ *                 type: string
  *             required:
  *               - content
  *     responses:
@@ -64,65 +67,11 @@ router.get("/post/:postId", isAuthorized, commentsController.getCommentsByPostId
  *             schema:
  *               $ref: '#/components/schemas/Comment'
  */
-router.post("/post/:postId", isAuthorized, commentsController.createComment);
+router.post("/", commentsController.createComment);
 
 /**
  * @swagger
- * /comment:
- *   get:
- *     tags:
- *       - Comments
- *     summary: Get all comments (requires auth)
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       '200':
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Comment'
- */
-router.get("/", isAuthorized, commentsController.getAllComments);
-
-/**
- * @swagger
- * /comment:
- *   post:
- *     tags:
- *       - Comments
- *     summary: Create a comment (requires auth)
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               postId:
- *                 type: string
- *               content:
- *                 type: string
- *             required:
- *               - postId
- *               - content
- *     responses:
- *       '201':
- *         description: Created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Comment'
- */
-router.post("/", isAuthorized, commentsController.createComment);
-
-/**
- * @swagger
- * /comment/{id}:
+ * /post/{postId}/comment/{id}:
  *   get:
  *     tags:
  *       - Comments
@@ -130,6 +79,11 @@ router.post("/", isAuthorized, commentsController.createComment);
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
  *       - in: path
  *         name: id
  *         required: true
@@ -143,11 +97,11 @@ router.post("/", isAuthorized, commentsController.createComment);
  *             schema:
  *               $ref: '#/components/schemas/Comment'
  */
-router.get("/:id", isAuthorized, commentsController.getCommentById);
+router.get("/:id", commentsController.getCommentById);
 
 /**
  * @swagger
- * /comment/{id}:
+ * /post/{postId}/comment/{id}:
  *   put:
  *     tags:
  *       - Comments
@@ -155,6 +109,11 @@ router.get("/:id", isAuthorized, commentsController.getCommentById);
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
  *       - in: path
  *         name: id
  *         required: true
@@ -179,11 +138,11 @@ router.get("/:id", isAuthorized, commentsController.getCommentById);
  *             schema:
  *               $ref: '#/components/schemas/Comment'
  */
-router.put("/:id", isAuthorized, commentsController.updateComment);
+router.put("/:id", commentsController.updateComment);
 
 /**
  * @swagger
- * /comment/{id}:
+ * /post/{postId}/comment/{id}:
  *   delete:
  *     tags:
  *       - Comments
@@ -191,6 +150,11 @@ router.put("/:id", isAuthorized, commentsController.updateComment);
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
  *       - in: path
  *         name: id
  *         required: true
@@ -200,5 +164,6 @@ router.put("/:id", isAuthorized, commentsController.updateComment);
  *       '200':
  *         description: Deleted
  */
-router.delete("/:id", isAuthorized, commentsController.deleteComment);
+router.delete("/:id", commentsController.deleteComment);
+
 export default router;

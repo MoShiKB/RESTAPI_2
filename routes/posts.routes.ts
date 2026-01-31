@@ -2,7 +2,11 @@ import express from "express";
 import postsController from "../controller/posts.controller";
 import isAuthorized from "../middleware/authorization";
 
+import commentsRouter from "./comments.routes";
+
 const router = express.Router();
+
+router.use("/:postId/comment", commentsRouter);
 
 /**
  * @swagger
@@ -18,14 +22,14 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Post'
+ *             $ref: '#/components/schemas/CreatePostRequest'
  *     responses:
  *       '201':
  *         description: Created
  *       '401':
  *         description: Unauthorized
  */
-router.post("/", isAuthorized, postsController.createPost);
+router.post("/", postsController.createPost);
 
 /**
  * @swagger
@@ -33,7 +37,9 @@ router.post("/", isAuthorized, postsController.createPost);
  *   get:
  *     tags:
  *       - Posts
- *     summary: Get all posts
+ *     summary: Get all posts (requires auth)
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       '200':
  *         description: OK
@@ -46,7 +52,9 @@ router.get("/", postsController.getAllPosts);
  *   get:
  *     tags:
  *       - Posts
- *     summary: Get post by ID
+ *     summary: Get post by ID (requires auth)
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -79,14 +87,14 @@ router.get("/:id", postsController.getPostById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Post'
+ *             $ref: '#/components/schemas/CreatePostRequest'
  *     responses:
  *       '200':
  *         description: Updated
  *       '401':
  *         description: Unauthorized
  */
-router.put("/:id", isAuthorized, postsController.updatePost);
+router.put("/:id", postsController.updatePost);
 
 /**
  * @swagger
@@ -109,6 +117,6 @@ router.put("/:id", isAuthorized, postsController.updatePost);
  *       '401':
  *         description: Unauthorized
  */
-router.delete("/:id", isAuthorized, postsController.deletePost);
+router.delete("/:id", postsController.deletePost);
 
 export default router;
