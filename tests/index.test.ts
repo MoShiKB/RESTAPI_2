@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import request from 'supertest';
-import app, { startServer } from '../index';
+import app, { startServer } from '../index';``
 
 describe('Main Server Tests', () => {
     it('should successfully connect to database and start server', async () => {
