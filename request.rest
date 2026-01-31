@@ -112,22 +112,22 @@ Authorization: Bearer {{accessToken}}
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 ###Create a new comment
-POST http://localhost:3001/comment
+POST http://localhost:3001/comment/post/{{postId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "postId": "{{postId}}",
   "content": "This is my comment on the post!",
-  "author": "John Doe"
+  "author": "{{userId}}"
 }
+
 
 ### Get all comments
 GET http://localhost:3001/comment
 Authorization: Bearer {{accessToken}}
 
 ###Get a comment by ID
-GET http://localhost:3001/comment/{{commentId}}
+GET http://localhost:3001/comment/post/{{postId}}/{{commentId}}
 Authorization: Bearer {{accessToken}}
 
 ###Get all comments for a specific post
@@ -135,14 +135,14 @@ GET http://localhost:3001/comment/post/{{postId}}
 Authorization: Bearer {{accessToken}}
 
 ### Update a comment
-PUT http://localhost:3001/comment/{{commentId}}
+PUT  http://localhost:3001/comment/post/{{postId}}/{{commentId}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
   "content": "This is my updated comment!",
-  "author": "John Doe"
+  "author": "{{userId}}"
 }
 ### Delete a comment
-DELETE http://localhost:3001/comment/{{commentId}}
+DELETE  http://localhost:3001/comment/post/{{postId}}/{{commentId}}
 Authorization: Bearer {{accessToken}}
