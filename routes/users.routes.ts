@@ -19,7 +19,7 @@ import isAuthorized from "../middleware/authorization";
 router.get("/", usersController.getAllUsers);
 
 /**
- * @openapi
+ * @swagger
  * /user/{id}:
  *   get:
  *     tags:
