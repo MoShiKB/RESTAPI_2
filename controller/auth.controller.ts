@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userModel, { IUser } from "../model/users.model";
+import { AuthRequest } from "../middleware/authorization";
 
 interface ITokenPayload {
     userId: string;
@@ -82,24 +83,12 @@ const login = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const logout = async (req: Request, res: Response): Promise<void> => {
-    const { refreshToken } = req.body;
-
-    if (!refreshToken) {
-        res.status(400).json({ error: "Refresh token required" });
-        return;
-    }
-
+const logout = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-        const decodedToken = jwt.verify(
-            refreshToken,
-            process.env.JWT_REFRESH_SECRET!
-        ) as ITokenPayload;
+        const user = req.user;
 
-        const user = await userModel.findById(decodedToken.userId).select("+refreshToken");
-
-        if (!user || user.refreshToken !== refreshToken) {
-            res.status(400).json({ error: "Invalid refresh token" });
+        if (!user) {
+            res.status(403).json({ error: "Not Authorized!" });
             return;
         }
 
@@ -108,7 +97,8 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 
         res.status(200).json({ message: "Logged out successfully" });
     } catch (err) {
-        res.status(400).json({ error: "Invalid refresh token" });
+        console.error(err);
+        res.status(500).json({ error: "Logout failed" });
     }
 };
 

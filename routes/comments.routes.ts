@@ -2,10 +2,11 @@ import express from "express";
 import commentsController from "../controller/comments.controller";
 import isAuthorized from "../middleware/authorization";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
+
 /**
  * @swagger
- * /comment/post/{postId}:
+ * /post/{postId}/comment:
  *   get:
  *     tags:
  *       - Comments
@@ -21,12 +22,18 @@ const router = express.Router();
  *     responses:
  *       '200':
  *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Comment'
  */
-router.get("/post/:postId", isAuthorized, commentsController.getCommentsByPostId);
+router.get("/", commentsController.getCommentsByPostId);
 
 /**
  * @swagger
- * /comment/post/{postId}:
+ * /post/{postId}/comment:
  *   post:
  *     tags:
  *       - Comments
@@ -44,35 +51,31 @@ router.get("/post/:postId", isAuthorized, commentsController.getCommentsByPostId
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Comment'
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *               author:
+ *                 type: string
+ *             required:
+ *               - content
  *     responses:
  *       '201':
  *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
  */
-router.post("/post/:postId", isAuthorized, commentsController.createComment);
+router.post("/", commentsController.createComment);
 
 /**
  * @swagger
- * /comment:
+ * /post/{postId}/comment/{id}:
  *   get:
  *     tags:
  *       - Comments
- *     summary: Get all comments (requires auth)
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       '200':
- *         description: OK
- */
-router.get("/", isAuthorized, commentsController.getAllComments);
-
-/**
- * @swagger
- * /comment/post/{postId}/{id}:
- *   get:
- *     tags:
- *       - Comments
- *     summary: Get a comment by id in a post (requires auth)
+ *     summary: Get a comment by id (requires auth)
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -89,12 +92,16 @@ router.get("/", isAuthorized, commentsController.getAllComments);
  *     responses:
  *       '200':
  *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
  */
-router.get("/post/:postId/:id", isAuthorized, commentsController.getCommentByIdInPost);
+router.get("/:id", commentsController.getCommentById);
 
 /**
  * @swagger
- * /comment/post/{postId}/{id}:
+ * /post/{postId}/comment/{id}:
  *   put:
  *     tags:
  *       - Comments
@@ -117,16 +124,25 @@ router.get("/post/:postId/:id", isAuthorized, commentsController.getCommentByIdI
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Comment'
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *             required:
+ *               - content
  *     responses:
  *       '200':
  *         description: Updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
  */
-router.put("/post/:postId/:id", isAuthorized, commentsController.updateCommentInPost);
+router.put("/:id", commentsController.updateComment);
 
 /**
  * @swagger
- * /comment/post/{postId}/{id}:
+ * /post/{postId}/comment/{id}:
  *   delete:
  *     tags:
  *       - Comments
@@ -148,13 +164,6 @@ router.put("/post/:postId/:id", isAuthorized, commentsController.updateCommentIn
  *       '200':
  *         description: Deleted
  */
-router.delete("/post/:postId/:id", isAuthorized, commentsController.deleteCommentInPost);
+router.delete("/:id", commentsController.deleteComment);
+
 export default router;
-
-
-
-
-
-
-
-

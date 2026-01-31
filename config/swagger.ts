@@ -11,6 +11,12 @@ const options = {
         name: "Yuli Keren & Moshik Baruch",
       },
     },
+    tags: [
+      { name: "Auth", description: "Authentication operations" },
+      { name: "Users", description: "User management operations" },
+      { name: "Posts", description: "Post operations" },
+      { name: "Comments", description: "Comment operations" },
+    ],
     servers: [
       {
         url: "http://localhost:3001",
@@ -163,6 +169,24 @@ const options = {
           required: ["refreshToken"],
           properties: {
             refreshToken: { type: "string" },
+          },
+        },
+        CreatePostRequest: {
+          type: "object",
+          required: ["title", "content", "senderId"],
+          properties: {
+            title: {
+              type: "string",
+              description: "Post title",
+            },
+            content: {
+              type: "string",
+              description: "Post content",
+            },
+            senderId: {
+              type: "string",
+              description: "ID of the post author",
+            },
           },
         },
       },
